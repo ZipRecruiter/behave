@@ -8,6 +8,22 @@ __credits__ = ['Graham TerMarsch', 'Jason Gowan']
 __email__ = 'jgowan@ziprecruiter.com'
 
 
+def _get_status_prefix(status):
+    if status == 'passed':
+        return 'ok'
+    if status == 'skipped':
+        return 'ok'
+    else:
+        return 'not ok'
+
+
+def _get_test_skipped(status):
+    if status == 'skipped':
+        return 'Skipped '
+    else:
+        return ''
+
+
 class TapFormatter(Formatter):
     name = 'tap'
     description = 'TAP (Test Anything protocol)'
@@ -17,7 +33,7 @@ class TapFormatter(Formatter):
         super(TapFormatter, self).__init__(stream, config)
         self._feature = None
         self._scenario = None
-        self.index = { 'feature':0, 'scenario':0, 'step':0 }
+        self.index = {'feature':0, 'scenario':0, 'step':0 }
 
 
     def feature(self, feature):
@@ -52,10 +68,10 @@ class TapFormatter(Formatter):
 
         self._tap_print(
             indent_level=2,
-            status=self._get_status_prefix(result.status),
+            status=_get_status_prefix(result.status),
             step_number=self.index['step'],
             name=result.keyword + " " + result.name,
-            skipped=self._get_test_skipped(result.status),
+            skipped=_get_test_skipped(result.status),
             duration=result.duration * 1000
         )
 
@@ -76,10 +92,10 @@ class TapFormatter(Formatter):
             self._indent_print(1, '1..{}'.format(self.index['scenario']))
             self._tap_print(
                 indent_level=0,
-                status=self._get_status_prefix(self._feature.status),
+                status=_get_status_prefix(self._feature.status),
                 step_number=self.index['feature'],
                 name='Feature: ' + self._feature.name,
-                skipped=self._get_test_skipped(self._feature.status),
+                skipped=_get_test_skipped(self._feature.status),
                 duration=self._feature.duration * 1000
             )
 
@@ -91,37 +107,23 @@ class TapFormatter(Formatter):
             plan_suffix = ''
             if self._scenario.status == 'skipped':
                 plan_suffix = ' # Skipped'
-            self._indent_print(2, '1..{}{}'.format(self.index['step'], plan_suffix))
+            self._indent_print(2, '1..{}{}'.format(self.index['step'],
+                                                   plan_suffix))
 
             self._tap_print(
                 indent_level=1,
-                status=self._get_status_prefix(self._scenario.status),
+                status=_get_status_prefix(self._scenario.status),
                 step_number=self.index['scenario'],
                 name='Scenario: ' + self._scenario.name,
-                skipped=self._get_test_skipped(self._scenario.status),
+                skipped=_get_test_skipped(self._scenario.status),
                 duration=self._scenario.duration * 1000
             )
 
             self._scenario = None
 
 
-    def _get_status_prefix(self, status):
-        if status == 'passed':
-            return 'ok'
-        if status == 'skipped':
-            return 'ok'
-        else:
-            return 'not ok'
-
-
-    def _get_test_skipped(self, status):
-        if status == 'skipped':
-            return 'Skipped '
-        else:
-            return ''
-
-
-    def _tap_print(self, indent_level=0, status='not ok', step_number=0, name='UNKNOWN', skipped='', duration=0):
+    def _tap_print(self, indent_level=0, status='not ok', step_number=0,
+                   name='UNKNOWN', skipped='', duration=0):
         self._indent_print(
             indent_level,
             '{:<80} # {}{:0.2f} ms'.format(
@@ -133,8 +135,8 @@ class TapFormatter(Formatter):
 
 
     def _indent_print(self, level, string):
-        for i in range(0,level):
-            self.stream.write(self.indent),
+        for i in range(0, level):
+            self.stream.write(self.indent)
         self.stream.write(string)
         self.stream.write('\n')
         self.stream.flush()

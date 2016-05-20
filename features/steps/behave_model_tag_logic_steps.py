@@ -48,7 +48,6 @@ from behave_model_util import \
     run_model_with_cmdline, collect_selected_and_skipped_scenarios
 from hamcrest import assert_that, equal_to
 
-import difflib
 import re
 import textwrap
 from behave4cmd0.command_steps import on_assert_failed_print_details
@@ -110,7 +109,7 @@ def step_then_scenarios_are_selected_with_cmdline(context):
 
 @then(u'the tap command output should contain')
 def step_the_command_output_should_contain(context):
-    output  = context.command_result.output
+    output = context.command_result.output
     clean_output = u''.join((re.sub(r'[0-9]+\.[0-9]{2} ms$', '', line) for line in output.splitlines(True)))
     clean_output = textwrap.dedent(clean_output)
     expected_text = textwrap.dedent(context.text)
